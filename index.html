@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>아마존 워터파크 준비물 체크리스트</title>
+<meta name="description" content="두 가족 워터파크 나들이 준비물 체크리스트 — 담당 분담과 메모 기능">
+<meta name="theme-color" content="#1F9EB0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏊</text></svg>">
+<style>
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; padding: 16px 14px 32px; background: #F7FBFC; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="loading">불러오는 중…</div>
+</div>
+
+<style>
+  #app, #app * { box-sizing: border-box; }
+  #app {
+    --ink: #08303F;
+    --deep: #0E4A5E;
+    --aqua: #1F9EB0;
+    --aqua-lite: #8FDCE3;
+    --foam: #E9F6F8;
+    --sun: #F5A623;
+    --sun-bg: #FFF3DC;
+    --coral: #EE6C5A;
+    --coral-bg: #FFEDE9;
+    --line: #D7E7EA;
+    --mute: #6E8C95;
+    --paper: #fff;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+                 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+    color: var(--ink);
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0 0 40px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #app .loading { padding: 40px 16px; color: var(--mute); text-align: center; }
+
+  /* ---------- header / water tank ---------- */
+  #app .tank {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--foam);
+    border: 1px solid var(--line);
+    padding: 22px 18px 20px;
+  }
+  #app .water {
+    position: absolute; left: -10%; right: -10%; bottom: 0;
+    width: 120%;
+    background: linear-gradient(180deg, rgba(31,158,176,.32), rgba(31,158,176,.55));
+    transition: height .6s cubic-bezier(.22,.75,.3,1);
+  }
+  #app .water::before, #app .water::after {
+    content: ''; position: absolute; top: -11px; left: 0;
+    width: 200%; height: 14px;
+    background: radial-gradient(circle at 12px -4px, transparent 11px, rgba(31,158,176,.45) 12px) repeat-x;
+    background-size: 24px 14px;
+    animation: drift 7s linear infinite;
+  }
+  #app .water::after { top: -8px; opacity: .5; animation-duration: 11s; animation-direction: reverse; }
+  @keyframes drift { to { transform: translateX(-24px); } }
+
+  #app .tank-inner { position: relative; }
+  #app .eyebrow {
+    font-size: 11px; letter-spacing: .16em; font-weight: 700;
+    color: var(--aqua); text-transform: uppercase; margin: 0 0 6px;
+  }
+  #app h1 { font-size: 23px; line-height: 1.3; margin: 0 0 4px; letter-spacing: -.02em; }
+  #app .sub { font-size: 13px; color: var(--deep); opacity: .8; margin: 0 0 16px; }
+  #app .count {
+    display: flex; align-items: baseline; gap: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  #app .count b { font-size: 34px; letter-spacing: -.03em; line-height: 1; }
+  #app .count span { font-size: 13px; color: var(--deep); }
+
+  /* ---------- families ---------- */
+  #app .crew { display: flex; gap: 8px; margin: 14px 0 10px; }
+  #app .crew input {
+    flex: 1; min-width: 0; font: inherit; font-size: 13px; font-weight: 700;
+    padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line);
+    background: var(--paper); color: var(--ink);
+  }
+  #app .crew input:focus { outline: 2px solid var(--aqua); outline-offset: 1px; }
+  #app .crew input.a { border-left: 5px solid var(--sun); }
+  #app .crew input.b { border-left: 5px solid var(--coral); }
+
+  /* ---------- filters ---------- */
+  #app .filters { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 12px; scrollbar-width: none; }
+  #app .filters::-webkit-scrollbar { display: none; }
+  #app .filters button {
+    flex: 0 0 auto; font: inherit; font-size: 13px; font-weight: 600;
+    padding: 8px 14px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--paper); color: var(--mute);
+  }
+  #app .filters button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+  /* ---------- sections ---------- */
+  #app section { margin-top: 22px; }
+  #app .sec-head {
+    display: flex; align-items: center; gap: 8px; padding: 0 2px 8px;
+    border-bottom: 2px solid var(--ink);
+  }
+  #app .sec-head h2 { font-size: 15px; margin: 0; letter-spacing: -.01em; flex: 1; }
+  #app .sec-head .tally { font-size: 12px; color: var(--mute); font-variant-numeric: tabular-nums; }
+
+  #app ul { list-style: none; margin: 0; padding: 0; }
+  #app li { border-bottom: 1px solid var(--line); }
+  #app .row { display: flex; align-items: flex-start; gap: 10px; padding: 12px 2px; }
+  #app .box {
+    flex: 0 0 auto; width: 22px; height: 22px; margin-top: 1px; border-radius: 7px;
+    border: 2px solid var(--aqua-lite); background: var(--paper);
+    cursor: pointer; position: relative; padding: 0;
+  }
+  #app .box[aria-checked="true"] { background: var(--aqua); border-color: var(--aqua); }
+  #app .box[aria-checked="true"]::after {
+    content: ''; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px;
+    border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(43deg);
+  }
+  #app .box:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  #app .body { flex: 1; min-width: 0; }
+  #app .name { font-size: 15px; line-height: 1.45; word-break: keep-all; }
+  #app li.done .name { color: var(--mute); text-decoration: line-through; text-decoration-color: var(--aqua-lite); }
+  #app .memo-peek { font-size: 12.5px; color: var(--aqua); margin-top: 3px; word-break: keep-all; }
+
+  #app .who {
+    flex: 0 0 auto; font: inherit; font-size: 12px; font-weight: 700;
+    padding: 5px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+    max-width: 96px; overflow: hidden; text-overflow: ellipsis;
+    border: 1px dashed var(--line); background: transparent; color: var(--mute);
+  }
+  #app .who.a { border: 1px solid var(--sun); background: var(--sun-bg); color: #96590A; }
+  #app .who.b { border: 1px solid var(--coral); background: var(--coral-bg); color: #A93725; }
+  #app .more {
+    flex: 0 0 auto; width: 28px; height: 28px; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--paper); color: var(--mute);
+    font-size: 15px; line-height: 1; padding: 0;
+  }
+  #app .more.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+  #app .panel { display: none; padding: 0 2px 14px 34px; }
+  #app li.open .panel { display: block; }
+  #app .panel textarea {
+    width: 100%; font: inherit; font-size: 14px; padding: 10px 12px; border-radius: 12px;
+    border: 1px solid var(--line); background: var(--foam); color: var(--ink);
+    resize: vertical; min-height: 62px;
+  }
+  #app .panel textarea:focus { outline: 2px solid var(--aqua); outline-offset: 1px; }
+  #app .panel .del {
+    margin-top: 8px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+    background: none; border: none; color: var(--coral); padding: 4px 0;
+  }
+
+  #app .add {
+    width: 100%; text-align: left; font: inherit; font-size: 13.5px; font-weight: 600;
+    color: var(--aqua); background: none; border: none; cursor: pointer; padding: 12px 2px;
+  }
+  #app .adder { display: flex; gap: 6px; padding: 10px 0; }
+  #app .adder input {
+    flex: 1; min-width: 0; font: inherit; font-size: 14px; padding: 10px 12px;
+    border-radius: 12px; border: 1px solid var(--line); background: var(--paper); color: var(--ink);
+  }
+  #app .adder input:focus { outline: 2px solid var(--aqua); outline-offset: 1px; }
+  #app .adder button {
+    font: inherit; font-size: 13px; font-weight: 700; padding: 0 16px; cursor: pointer;
+    border-radius: 12px; border: none; background: var(--ink); color: #fff;
+  }
+
+  #app .empty { padding: 18px 2px; color: var(--mute); font-size: 13.5px; }
+
+  /* ---------- footer ---------- */
+  #app .foot {
+    margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  #app .foot button {
+    font: inherit; font-size: 12.5px; font-weight: 600; padding: 8px 12px; cursor: pointer;
+    border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--deep);
+  }
+  #app .foot .note { font-size: 11.5px; color: var(--mute); flex: 1 1 100%; line-height: 1.5; }
+  #app .status { font-size: 11.5px; color: var(--aqua); font-weight: 600; }
+
+  @media (prefers-reduced-motion: reduce) {
+    #app .water, #app .water::before, #app .water::after { transition: none; animation: none; }
+  }
+</style>
+
+<script>
+(function () {
+  var KEY = 'waterpark:checklist:v1';
+  var app = document.getElementById('app');
+  var state = null;
+  var filter = 'all';
+  var open = {};
+  var saveTimer = null;
+
+  var SEED = [
+    ['음식 · 바베큐', 0, [
+      ['삼겹살 · 목살 1.5kg (어른 300g / 아이 150g 기준)', ''],
+      ['소시지 · 떡갈비 · 새우 (아이들용)', '굽기 쉬운 걸로'],
+      ['김치 (구워 먹기 겸 반찬)', ''],
+      ['쌈채소 · 마늘 · 쌈장 · 기름장', ''],
+      ['즉석밥 6~8개', '남은 고기로 볶음밥'],
+      ['라면 4~5개 (야식용)', '']
+    ]],
+    ['음식 · 간식 & 음료', 0, [
+      ['과일 (수박 · 포도 · 방울토마토)', '집에서 미리 손질해 밀폐용기에'],
+      ['과자 · 젤리 · 어묵바', ''],
+      ['생수 2L 3~4병', ''],
+      ['이온음료', '물놀이는 탈수가 심함'],
+      ['아이 주스 · 커피', ''],
+      ['아이스박스 + 얼음 넉넉히', '']
+    ]],
+    ['취사 도구 (버너 · 불판은 대여)', -1, [
+      ['부탄가스 3~4개', ''],
+      ['은박호일', '불판에 깔면 설거지 끝'],
+      ['키친타월 · 물티슈 대용량', ''],
+      ['집게 · 가위 · 국자', ''],
+      ['종이접시 · 종이컵 · 수저', ''],
+      ['쌈장 그릇 · 밀폐용기', ''],
+      ['쓰레기봉투 2~3장 · 지퍼백', ''],
+      ['수세미 · 주방세제 소량', '']
+    ]],
+    ['물놀이', -1, [
+      ['수건 1인당 2장 (오후용 / 야간용)', ''],
+      ['아이 여벌옷 2벌씩', ''],
+      ['젖은 옷 담을 비닐봉투', ''],
+      ['구명조끼 · 암링', '초등 저학년용'],
+      ['튜브 (공기주입기 대여 확인)', ''],
+      ['아쿠아슈즈 · 물안경', ''],
+      ['워터프루프 선크림 · 모자', ''],
+      ['방수팩 (휴대폰)', '']
+    ]],
+    ['카바나 · 편의', -1, [
+      ['돗자리 · 매트', ''],
+      ['얇은 담요 · 겉옷', '야간 물놀이 후 체온 뚝'],
+      ['휴대용 선풍기', ''],
+      ['보조배터리 · 멀티탭', ''],
+      ['랜턴 · 무드등', '야간 카바나 조명 약함'],
+      ['모기기피제', '']
+    ]],
+    ['상비약', -1, [
+      ['밴드 · 소독약', ''],
+      ['화상연고', '불판 화상 대비'],
+      ['벌레 물린 데 바르는 약', ''],
+      ['소화제', ''],
+      ['알로에젤', '']
+    ]],
+    ['예약처에 미리 확인', -1, [
+      ['취사 가능 시간대', '밤에는 제한되는 곳 많음'],
+      ['카바나 전기 사용 가능 여부', ''],
+      ['주류 반입 가능 여부', ''],
+      ['대형 튜브 반입 규정', '']
+    ]]
+  ];
+
+  function seed() {
+    var items = [], n = 0;
+    SEED.forEach(function (sec) {
+      sec[2].forEach(function (it) {
+        items.push({ id: 'i' + (n++), cat: sec[0], name: it[0], memo: it[1], done: false, who: sec[1] });
+      });
+    });
+    return { v: 1, families: ['은영네', '현주네'], items: items };
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+    });
+  }
+
+  function setStatus(msg) {
+    var el = app.querySelector('.status');
+    if (el) { el.textContent = msg; if (msg) setTimeout(function () { if (el.textContent === msg) el.textContent = ''; }, 1600); }
+  }
+
+  // Claude 아티팩트 안에서는 공유 저장소를, 그 밖(GitHub Pages 등)에서는
+  // 브라우저 자체 저장(localStorage)을 쓴다.
+  var SHARED = !!(window.storage && window.storage.get);
+  var STORE = SHARED ? {
+    get: function () {
+      return window.storage.get(KEY, true).then(function (r) { return r && r.value ? r.value : null; });
+    },
+    set: function (v) { return window.storage.set(KEY, v, true); }
+  } : {
+    get: function () {
+      try { return Promise.resolve(localStorage.getItem(KEY)); }
+      catch (e) { return Promise.resolve(null); }
+    },
+    set: function (v) {
+      try { localStorage.setItem(KEY, v); return Promise.resolve(); }
+      catch (e) { return Promise.reject(e); }
+    }
+  };
+
+  function save() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      STORE.set(JSON.stringify(state))
+        .then(function () { setStatus('저장됨'); })
+        .catch(function () { setStatus('저장 실패 — 잠시 후 다시'); });
+    }, 350);
+  }
+
+  function load() {
+    return STORE.get()
+      .then(function (v) { return v ? JSON.parse(v) : seed(); })
+      .catch(function () { return seed(); });
+  }
+
+  function visible(it) {
+    if (filter === 'all') return true;
+    if (filter === 'left') return !it.done;
+    if (filter === 'a') return it.who === 0;
+    if (filter === 'b') return it.who === 1;
+    return true;
+  }
+
+  function render() {
+    var cats = [];
+    state.items.forEach(function (it) { if (cats.indexOf(it.cat) < 0) cats.push(it.cat); });
+
+    var total = state.items.length;
+    var done = state.items.filter(function (i) { return i.done; }).length;
+    var pct = total ? Math.round(done / total * 100) : 0;
+    var fa = esc(state.families[0]), fb = esc(state.families[1]);
+
+    var html = '';
+    html += '<div class="tank"><div class="water" style="height:' + pct + '%"></div><div class="tank-inner">' +
+      '<p class="eyebrow">아마존 워터파크 · 13:00–22:00</p>' +
+      '<h1>두 집 준비물 체크</h1>' +
+      '<p class="sub">어른 4 · 초등 3 · 중학생 1 &nbsp;|&nbsp; 카바나 + 취사</p>' +
+      '<div class="count"><b>' + done + '</b><span>/ ' + total + '개 완료 · ' + pct + '%</span></div>' +
+      '</div></div>';
+
+    html += '<div class="crew">' +
+      '<input class="a" data-fam="0" value="' + fa + '" maxlength="12" aria-label="첫 번째 집 이름">' +
+      '<input class="b" data-fam="1" value="' + fb + '" maxlength="12" aria-label="두 번째 집 이름">' +
+      '</div>';
+
+    var na = state.items.filter(function (i) { return i.who === 0; }).length;
+    var nb = state.items.filter(function (i) { return i.who === 1; }).length;
+    var nn = total - na - nb;
+    html += '<div class="filters">' +
+      '<button data-f="all" aria-pressed="' + (filter === 'all') + '">전체 ' + total + '</button>' +
+      '<button data-f="left" aria-pressed="' + (filter === 'left') + '">남은 것 ' + (total - done) + '</button>' +
+      '<button data-f="a" aria-pressed="' + (filter === 'a') + '">' + fa + ' ' + na + '</button>' +
+      '<button data-f="b" aria-pressed="' + (filter === 'b') + '">' + fb + ' ' + nb + '</button>' +
+      '</div>';
+
+    cats.forEach(function (cat) {
+      var all = state.items.filter(function (i) { return i.cat === cat; });
+      var list = all.filter(visible);
+      if (!list.length && filter !== 'all') return;
+      var d = all.filter(function (i) { return i.done; }).length;
+
+      html += '<section><div class="sec-head"><h2>' + esc(cat) + '</h2>' +
+        '<span class="tally">' + d + '/' + all.length + '</span></div><ul>';
+
+      list.forEach(function (it) {
+        var whoCls = it.who === 0 ? 'a' : (it.who === 1 ? 'b' : '');
+        var whoTxt = it.who === 0 ? fa : (it.who === 1 ? fb : '담당 +');
+        var isOpen = !!open[it.id];
+        html += '<li class="' + (it.done ? 'done ' : '') + (isOpen ? 'open' : '') + '" data-id="' + it.id + '">' +
+          '<div class="row">' +
+          '<button class="box" role="checkbox" aria-checked="' + it.done + '" data-act="toggle" aria-label="완료 체크"></button>' +
+          '<div class="body"><div class="name">' + esc(it.name) + '</div>' +
+          (it.memo && !isOpen ? '<div class="memo-peek">✎ ' + esc(it.memo) + '</div>' : '') +
+          '</div>' +
+          '<button class="who ' + whoCls + '" data-act="who">' + esc(whoTxt) + '</button>' +
+          '<button class="more' + (isOpen ? ' on' : '') + '" data-act="more" aria-label="메모">✎</button>' +
+          '</div>' +
+          '<div class="panel"><textarea data-act="memo" placeholder="메모 — 수량, 누가 사올지, 빠뜨리기 쉬운 것">' + esc(it.memo) + '</textarea>' +
+          '<button class="del" data-act="del">이 항목 삭제</button></div>' +
+          '</li>';
+      });
+
+      html += '</ul>';
+      if (filter === 'all') {
+        html += '<div class="adder" data-cat="' + esc(cat) + '">' +
+          '<input placeholder="항목 추가" aria-label="' + esc(cat) + '에 항목 추가">' +
+          '<button data-act="add">추가</button></div>';
+      }
+      html += '</section>';
+    });
+
+    if (filter !== 'all' && !state.items.filter(visible).length) {
+      html += '<div class="empty">해당하는 항목이 없어요.</div>';
+    }
+
+    html += '<div class="foot">' +
+      (SHARED ? '<button data-act="refresh">최신 내용 불러오기</button>' : '') +
+      '<button data-act="reset">처음 목록으로 되돌리기</button>' +
+      '<span class="status"></span>' +
+      '<p class="note">' + (SHARED
+        ? '이 목록은 링크를 연 모든 사람이 함께 보고 수정합니다. 상대가 바꾼 내용은 “최신 내용 불러오기”로 가져오세요.'
+        : '체크·메모는 이 브라우저에만 저장됩니다. 기기마다 목록이 따로 관리되니, 두 집이 각자 자기 몫을 체크하는 용도로 쓰세요.') +
+      '</p></div>';
+
+    app.innerHTML = html;
+  }
+
+  function find(id) {
+    for (var i = 0; i < state.items.length; i++) if (state.items[i].id === id) return state.items[i];
+    return null;
+  }
+
+  app.addEventListener('click', function (e) {
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    var act = btn.getAttribute('data-act');
+
+    if (btn.hasAttribute('data-f')) { filter = btn.getAttribute('data-f'); render(); return; }
+
+    var li = btn.closest('li');
+    var it = li ? find(li.getAttribute('data-id')) : null;
+
+    if (act === 'toggle' && it) { it.done = !it.done; save(); render(); return; }
+    if (act === 'who' && it) { it.who = it.who === -1 ? 0 : (it.who === 0 ? 1 : -1); save(); render(); return; }
+    if (act === 'more' && it) { open[it.id] = !open[it.id]; render();
+      var ta = app.querySelector('li[data-id="' + it.id + '"] textarea'); if (ta) ta.focus(); return; }
+    if (act === 'del' && it) {
+      state.items = state.items.filter(function (x) { return x.id !== it.id; });
+      save(); render(); return;
+    }
+    if (act === 'add') {
+      var wrap = btn.closest('.adder');
+      var input = wrap.querySelector('input');
+      var val = input.value.trim();
+      if (!val) { input.focus(); return; }
+      state.items.push({ id: 'i' + Date.now(), cat: wrap.getAttribute('data-cat'), name: val, memo: '', done: false, who: -1 });
+      save(); render(); return;
+    }
+    if (act === 'refresh') {
+      load().then(function (s) { state = s; render(); setStatus('불러왔어요'); });
+      return;
+    }
+    if (act === 'reset') {
+      if (!confirm('체크와 메모가 모두 사라지고 기본 목록으로 돌아갑니다. 계속할까요?')) return;
+      state = seed(); save(); render(); return;
+    }
+  });
+
+  app.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target.matches('.adder input')) {
+      e.target.closest('.adder').querySelector('button').click();
+    }
+  });
+
+  app.addEventListener('input', function (e) {
+    var t = e.target;
+    if (t.matches('textarea[data-act="memo"]')) {
+      var it = find(t.closest('li').getAttribute('data-id'));
+      if (it) { it.memo = t.value; save(); }
+    }
+    if (t.matches('.crew input')) {
+      state.families[+t.getAttribute('data-fam')] = t.value || (t.getAttribute('data-fam') === '0' ? '은영네' : '현주네');
+      save();
+    }
+  });
+
+  app.addEventListener('change', function (e) {
+    if (e.target.matches('.crew input')) render();
+  });
+
+  load().then(function (s) {
+    state = s;
+    // 기존에 저장된 기본 이름은 새 이름으로 바꿔준다 (체크·메모는 그대로 유지)
+    if (state.families[0] === '우리집') { state.families[0] = '은영네'; save(); }
+    if (state.families[1] === '○○네') { state.families[1] = '현주네'; save(); }
+    render();
+  });
+})();
+</script>
+</body>
+</html>
