@@ -188,6 +188,17 @@
   #app .foot .note { font-size: 11.5px; color: var(--mute); flex: 1 1 100%; line-height: 1.5; }
   #app .status { font-size: 11.5px; color: var(--aqua); font-weight: 600; }
 
+  #app .conn {
+    font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 999px;
+    white-space: nowrap; border: 1px solid var(--line); color: var(--mute);
+  }
+  #app .conn::before {
+    content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    margin-right: 5px; vertical-align: 1px; background: currentColor;
+  }
+  #app .conn.live { border-color: var(--aqua); background: var(--foam); color: var(--deep); }
+  #app .conn.offline { border-color: var(--coral); background: var(--coral-bg); color: #A93725; }
+
   @media (prefers-reduced-motion: reduce) {
     #app .water, #app .water::before, #app .water::after { transition: none; animation: none; }
   }
@@ -283,38 +294,135 @@
     if (el) { el.textContent = msg; if (msg) setTimeout(function () { if (el.textContent === msg) el.textContent = ''; }, 1600); }
   }
 
-  // Claude 아티팩트 안에서는 공유 저장소를, 그 밖(GitHub Pages 등)에서는
-  // 브라우저 자체 저장(localStorage)을 쓴다.
-  var SHARED = !!(window.storage && window.storage.get);
-  var STORE = SHARED ? {
-    get: function () {
-      return window.storage.get(KEY, true).then(function (r) { return r && r.value ? r.value : null; });
-    },
-    set: function (v) { return window.storage.set(KEY, v, true); }
-  } : {
-    get: function () {
-      try { return Promise.resolve(localStorage.getItem(KEY)); }
-      catch (e) { return Promise.resolve(null); }
-    },
-    set: function (v) {
-      try { localStorage.setItem(KEY, v); return Promise.resolve(); }
-      catch (e) { return Promise.reject(e); }
-    }
-  };
+  // ---------- 동기화 ----------
+  // 정본은 Cloudflare Worker(Durable Object)에 있고, WebSocket 으로 접속한 모든
+  // 사람에게 변경이 즉시 전달된다. localStorage 는 첫 화면을 바로 그리기 위한
+  // 캐시일 뿐이므로, 서버 상태가 오면 항상 덮어쓴다.
+  var WORKER_HOST = 'waterpark-sync.shwoo.workers.dev';
+  var ROOM = 'waterpark';
 
-  function save() {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(function () {
-      STORE.set(JSON.stringify(state))
-        .then(function () { setStatus('저장됨'); })
-        .catch(function () { setStatus('저장 실패 — 잠시 후 다시'); });
-    }, 350);
+  var CONN_TEXT = {
+    connecting: '연결 중…',
+    live: '실시간 연결됨',
+    offline: '연결 끊김 — 변경은 연결되면 반영됩니다'
+  };
+  var conn = { ws: null, ready: false, tries: 0, queue: [], state: 'connecting' };
+
+  function cacheSave() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function cacheLoad() {
+    try { var v = localStorage.getItem(KEY); return v ? JSON.parse(v) : null; }
+    catch (e) { return null; }
   }
 
-  function load() {
-    return STORE.get()
-      .then(function (v) { return v ? JSON.parse(v) : seed(); })
-      .catch(function () { return seed(); });
+  function setConn(s) {
+    conn.state = s;
+    var el = app.querySelector('.conn');
+    if (el) { el.className = 'conn ' + s; el.textContent = CONN_TEXT[s] || ''; }
+  }
+
+  // 연결이 끊겨 있으면 큐에 쌓아뒀다가 재연결 시 순서대로 흘려보낸다.
+  function send(msg) {
+    if (conn.ready) {
+      try { conn.ws.send(JSON.stringify(msg)); return; } catch (e) {}
+    }
+    conn.queue.push(msg);
+  }
+
+  function connect() {
+    if (WORKER_HOST.indexOf('__') === 0) { setConn('offline'); return; }
+    var ws;
+    var proto = /^(localhost|127\.0\.0\.1)(:|$)/.test(WORKER_HOST) ? 'ws://' : 'wss://';
+    try {
+      ws = new WebSocket(proto + WORKER_HOST + '/ws?room=' + encodeURIComponent(ROOM));
+    } catch (e) { retry(); return; }
+    conn.ws = ws;
+
+    ws.onopen = function () {
+      conn.ready = true;
+      conn.tries = 0;
+      // 밀린 변경을 먼저 보내고 나서 최신 상태를 요청해야, 방금 보낸 것이
+      // 빠진 스냅샷으로 덮어써지지 않는다.
+      var q = conn.queue;
+      conn.queue = [];
+      q.forEach(function (m) { try { ws.send(JSON.stringify(m)); } catch (e) {} });
+      try { ws.send(JSON.stringify({ t: 'hello' })); } catch (e) {}
+      setConn('live');
+    };
+
+    ws.onmessage = function (ev) {
+      var m;
+      try { m = JSON.parse(ev.data); } catch (e) { return; }
+
+      if (m.t === 'snap') {
+        if (m.empty) {
+          // 방이 비어 있다 — 기본 목록을 심는다. 두 명이 동시에 들어와도
+          // id 가 결정적이라 결과가 같고, 서버도 비어 있을 때만 받는다.
+          send({ t: 'seed', families: seed().families, items: seed().items });
+          return;
+        }
+        state = { v: 1, families: m.families, items: m.items };
+        cacheSave();
+        render();
+      } else if (m.t === 'op') {
+        applyOp(m.op);
+        cacheSave();
+        render();
+      }
+    };
+
+    ws.onclose = function () { conn.ready = false; setConn('offline'); retry(); };
+    ws.onerror = function () { try { ws.close(); } catch (e) {} };
+  }
+
+  function retry() {
+    conn.tries++;
+    setTimeout(connect, Math.min(1000 * Math.pow(2, conn.tries - 1), 15000));
+  }
+
+  function sortItems() {
+    state.items.sort(function (a, b) { return (a.ord || 0) - (b.ord || 0); });
+  }
+
+  function applyOp(op) {
+    if (!op || !state) return;
+    if (op.t === 'set') {
+      var it = find(op.id);
+      if (!it) return;
+      var p = op.patch || {};
+      if ('done' in p) it.done = !!p.done;
+      if ('who' in p) it.who = p.who;
+      if ('memo' in p) it.memo = p.memo;
+      if ('name' in p) it.name = p.name;
+    } else if (op.t === 'add' && op.item) {
+      var ex = find(op.item.id);
+      if (ex) { ex.ord = op.item.ord; }   // 서버가 정한 순서로 교정
+      else { state.items.push(op.item); }
+      sortItems();
+    } else if (op.t === 'del') {
+      state.items = state.items.filter(function (x) { return x.id !== op.id; });
+    } else if (op.t === 'fam') {
+      state.families[op.i === 1 ? 1 : 0] = op.v;
+    }
+  }
+
+  // 메모·집 이름은 타이핑마다 보내지 않고 잠깐 모아서 보낸다.
+  var pend = {}, pendFam = {};
+  function queuePatch(id, patch) {
+    pend[id] = Object.assign(pend[id] || {}, patch);
+    schedule();
+  }
+  function queueFam(i, v) { pendFam[i] = v; schedule(); }
+  function schedule() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      Object.keys(pend).forEach(function (k) { send({ t: 'set', id: k, patch: pend[k] }); });
+      Object.keys(pendFam).forEach(function (i) { send({ t: 'fam', i: +i, v: pendFam[i] }); });
+      pend = {}; pendFam = {};
+      cacheSave();
+      setStatus('저장됨');
+    }, 350);
   }
 
   function visible(it) {
@@ -398,15 +506,55 @@
     }
 
     html += '<div class="foot">' +
-      (SHARED ? '<button data-act="refresh">최신 내용 불러오기</button>' : '') +
+      '<span class="conn ' + conn.state + '">' + esc(CONN_TEXT[conn.state] || '') + '</span>' +
       '<button data-act="reset">처음 목록으로 되돌리기</button>' +
       '<span class="status"></span>' +
-      '<p class="note">' + (SHARED
-        ? '이 목록은 링크를 연 모든 사람이 함께 보고 수정합니다. 상대가 바꾼 내용은 “최신 내용 불러오기”로 가져오세요.'
-        : '체크·메모는 이 브라우저에만 저장됩니다. 기기마다 목록이 따로 관리되니, 두 집이 각자 자기 몫을 체크하는 용도로 쓰세요.') +
-      '</p></div>';
+      '<p class="note">이 목록은 링크를 연 모든 사람이 함께 보고 고칩니다. ' +
+      '한쪽에서 체크하면 다른 쪽 화면에 바로 반영되니 새로고침할 필요가 없습니다.</p>' +
+      '</div>';
 
+    var f = captureFocus();
     app.innerHTML = html;
+    restoreFocus(f);
+  }
+
+  // 상대가 바꾼 내용이 도착하면 화면을 통째로 다시 그리기 때문에,
+  // 그 순간 입력 중이던 칸의 내용과 커서 위치를 잃지 않도록 되살린다.
+  function captureFocus() {
+    var el = document.activeElement;
+    if (!el || !app.contains(el) || el.value === undefined) return null;
+    var li = el.closest('li');
+    var adder = el.closest('.adder');
+    var kind = el.matches('textarea[data-act="memo"]') ? 'memo'
+             : el.matches('.crew input') ? 'fam'
+             : (adder ? 'adder' : null);
+    if (!kind) return null;
+    return {
+      kind: kind,
+      id: li ? li.getAttribute('data-id') : null,
+      fam: el.getAttribute('data-fam'),
+      cat: adder ? adder.getAttribute('data-cat') : null,
+      value: el.value,
+      start: el.selectionStart,
+      end: el.selectionEnd
+    };
+  }
+
+  function restoreFocus(f) {
+    if (!f) return;
+    var el = null;
+    if (f.kind === 'memo' && f.id) {
+      el = app.querySelector('li[data-id="' + f.id + '"] textarea[data-act="memo"]');
+    } else if (f.kind === 'fam') {
+      el = app.querySelector('.crew input[data-fam="' + f.fam + '"]');
+    } else if (f.kind === 'adder' && f.cat != null) {
+      var wrap = app.querySelector('.adder[data-cat="' + f.cat.replace(/"/g, '\\"') + '"]');
+      el = wrap ? wrap.querySelector('input') : null;
+    }
+    if (!el) return;
+    el.value = f.value;               // 입력 중이던 내용이 우선이다
+    el.focus();
+    try { el.setSelectionRange(f.start, f.end); } catch (e) {}
   }
 
   function find(id) {
@@ -424,29 +572,46 @@
     var li = btn.closest('li');
     var it = li ? find(li.getAttribute('data-id')) : null;
 
-    if (act === 'toggle' && it) { it.done = !it.done; save(); render(); return; }
-    if (act === 'who' && it) { it.who = it.who === -1 ? 0 : (it.who === 0 ? 1 : -1); save(); render(); return; }
+    if (act === 'toggle' && it) {
+      it.done = !it.done;
+      send({ t: 'set', id: it.id, patch: { done: it.done } });
+      cacheSave(); render(); return;
+    }
+    if (act === 'who' && it) {
+      it.who = it.who === -1 ? 0 : (it.who === 0 ? 1 : -1);
+      send({ t: 'set', id: it.id, patch: { who: it.who } });
+      cacheSave(); render(); return;
+    }
     if (act === 'more' && it) { open[it.id] = !open[it.id]; render();
       var ta = app.querySelector('li[data-id="' + it.id + '"] textarea'); if (ta) ta.focus(); return; }
     if (act === 'del' && it) {
       state.items = state.items.filter(function (x) { return x.id !== it.id; });
-      save(); render(); return;
+      send({ t: 'del', id: it.id });
+      cacheSave(); render(); return;
     }
     if (act === 'add') {
       var wrap = btn.closest('.adder');
       var input = wrap.querySelector('input');
       var val = input.value.trim();
       if (!val) { input.focus(); return; }
-      state.items.push({ id: 'i' + Date.now(), cat: wrap.getAttribute('data-cat'), name: val, memo: '', done: false, who: -1 });
-      save(); render(); return;
-    }
-    if (act === 'refresh') {
-      load().then(function (s) { state = s; render(); setStatus('불러왔어요'); });
-      return;
+      // 두 기기에서 동시에 추가해도 겹치지 않는 id 를 쓴다.
+      var item = {
+        id: 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+        cat: wrap.getAttribute('data-cat'),
+        name: val, memo: '', done: false, who: -1,
+        ord: state.items.reduce(function (m, x) { return Math.max(m, x.ord || 0); }, 0) + 1000
+      };
+      state.items.push(item);
+      send({ t: 'add', item: { id: item.id, cat: item.cat, name: item.name } });
+      input.value = '';
+      cacheSave(); render(); return;
     }
     if (act === 'reset') {
-      if (!confirm('체크와 메모가 모두 사라지고 기본 목록으로 돌아갑니다. 계속할까요?')) return;
-      state = seed(); save(); render(); return;
+      if (!confirm('모두의 체크와 메모가 사라지고 기본 목록으로 돌아갑니다. 두 집 화면 모두 초기화됩니다. 계속할까요?')) return;
+      var s = seed();
+      state = s;
+      send({ t: 'reset', families: s.families, items: s.items });
+      cacheSave(); render(); return;
     }
   });
 
@@ -460,11 +625,13 @@
     var t = e.target;
     if (t.matches('textarea[data-act="memo"]')) {
       var it = find(t.closest('li').getAttribute('data-id'));
-      if (it) { it.memo = t.value; save(); }
+      if (it) { it.memo = t.value; queuePatch(it.id, { memo: it.memo }); }
     }
     if (t.matches('.crew input')) {
-      state.families[+t.getAttribute('data-fam')] = t.value || (t.getAttribute('data-fam') === '0' ? '은영네' : '현주네');
-      save();
+      var i = +t.getAttribute('data-fam');
+      var v = t.value || (i === 0 ? '은영네' : '현주네');
+      state.families[i] = v;
+      queueFam(i, v);
     }
   });
 
@@ -472,13 +639,10 @@
     if (e.target.matches('.crew input')) render();
   });
 
-  load().then(function (s) {
-    state = s;
-    // 기존에 저장된 기본 이름은 새 이름으로 바꿔준다 (체크·메모는 그대로 유지)
-    if (state.families[0] === '우리집') { state.families[0] = '은영네'; save(); }
-    if (state.families[1] === '○○네') { state.families[1] = '현주네'; save(); }
-    render();
-  });
+  // 캐시로 먼저 그려 흰 화면을 피하고, 연결되면 서버 상태로 덮어쓴다.
+  state = cacheLoad() || seed();
+  render();
+  connect();
 })();
 </script>
 </body>
