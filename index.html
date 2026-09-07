@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>아마존 워터파크 준비물 체크리스트</title>
-<meta name="description" content="두 가족 워터파크 나들이 준비물 체크리스트 — 담당 분담과 메모 기능">
+<title>추석 가족여행 준비물 체크리스트</title>
+<meta name="description" content="세 집 추석 가족여행 준비물 체크리스트 — 갯벌체험과 2박 3일 식재료 분담">
 <meta name="theme-color" content="#1F9EB0">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏊</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦪</text></svg>">
 <style>
   html { -webkit-text-size-adjust: 100%; }
   body { margin: 0; padding: 16px 14px 32px; background: #F7FBFC; }
@@ -27,20 +27,25 @@
     --foam: #E9F6F8;
     --sun: #F5A623;
     --sun-bg: #FFF3DC;
+    --sun-ink: #8A5006;
     --coral: #EE6C5A;
     --coral-bg: #FFEDE9;
+    --coral-ink: #A93725;
+    --leaf: #3A9D5D;
+    --leaf-bg: #E6F6EB;
+    --leaf-ink: #1F6B3A;
     --line: #D7E7EA;
-    --mute: #6E8C95;
+    --mute: #5E7C85;
     --paper: #fff;
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
                  'Malgun Gothic', 'Noto Sans KR', sans-serif;
     color: var(--ink);
-    max-width: 560px;
+    max-width: 600px;
     margin: 0 auto;
     padding: 0 0 40px;
     -webkit-tap-highlight-color: transparent;
   }
-  #app .loading { padding: 40px 16px; color: var(--mute); text-align: center; }
+  #app .loading { padding: 40px 16px; color: var(--mute); text-align: center; font-size: 16px; }
 
   /* ---------- header / water tank ---------- */
   #app .tank {
@@ -69,127 +74,153 @@
 
   #app .tank-inner { position: relative; }
   #app .eyebrow {
-    font-size: 11px; letter-spacing: .16em; font-weight: 700;
+    font-size: 12px; letter-spacing: .16em; font-weight: 700;
     color: var(--aqua); text-transform: uppercase; margin: 0 0 6px;
   }
-  #app h1 { font-size: 23px; line-height: 1.3; margin: 0 0 4px; letter-spacing: -.02em; }
-  #app .sub { font-size: 13px; color: var(--deep); opacity: .8; margin: 0 0 16px; }
+  #app h1 { font-size: 26px; line-height: 1.3; margin: 0 0 5px; letter-spacing: -.02em; }
+  #app .sub { font-size: 15px; line-height: 1.5; color: var(--deep); opacity: .85; margin: 0 0 16px; word-break: keep-all; }
   #app .count {
     display: flex; align-items: baseline; gap: 8px;
     font-variant-numeric: tabular-nums;
   }
-  #app .count b { font-size: 34px; letter-spacing: -.03em; line-height: 1; }
-  #app .count span { font-size: 13px; color: var(--deep); }
+  #app .count b { font-size: 38px; letter-spacing: -.03em; line-height: 1; }
+  #app .count span { font-size: 15px; color: var(--deep); }
+
+  /* ---------- plan card ---------- */
+  #app .plan {
+    margin-top: 12px; border: 1px solid var(--line); border-radius: 16px;
+    background: var(--paper); overflow: hidden;
+  }
+  #app .plan-toggle {
+    width: 100%; text-align: left; font: inherit; font-size: 16px; font-weight: 700;
+    padding: 15px 16px; cursor: pointer; border: none; background: var(--paper); color: var(--ink);
+    display: flex; align-items: center; gap: 8px;
+  }
+  #app .plan-toggle .chev { margin-left: auto; color: var(--aqua); font-size: 14px; }
+  #app .plan-body { padding: 0 16px 18px; }
+  #app .plan h3 { font-size: 15px; margin: 16px 0 8px; color: var(--deep); letter-spacing: .02em; }
+  #app .plan table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.55; }
+  #app .plan th, #app .plan td {
+    border-bottom: 1px solid var(--line); padding: 8px 6px; text-align: left; vertical-align: top;
+    word-break: keep-all;
+  }
+  #app .plan th { color: var(--mute); font-size: 13px; font-weight: 700; white-space: nowrap; }
+  #app .plan td.d { white-space: nowrap; font-weight: 700; }
+  #app .plan ul { margin: 8px 0 0; padding-left: 18px; }
+  #app .plan li { font-size: 14.5px; line-height: 1.6; margin: 4px 0; color: var(--deep); word-break: keep-all; }
 
   /* ---------- families ---------- */
-  #app .crew { display: flex; gap: 8px; margin: 14px 0 10px; }
+  #app .crew { display: flex; gap: 6px; margin: 16px 0 10px; }
   #app .crew input {
-    flex: 1; min-width: 0; font: inherit; font-size: 13px; font-weight: 700;
-    padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line);
+    flex: 1; min-width: 0; font: inherit; font-size: 15px; font-weight: 700;
+    padding: 11px 10px; border-radius: 12px; border: 1px solid var(--line);
     background: var(--paper); color: var(--ink);
   }
   #app .crew input:focus { outline: 2px solid var(--aqua); outline-offset: 1px; }
   #app .crew input.a { border-left: 5px solid var(--sun); }
   #app .crew input.b { border-left: 5px solid var(--coral); }
+  #app .crew input.c { border-left: 5px solid var(--leaf); }
 
   /* ---------- filters ---------- */
   #app .filters { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 12px; scrollbar-width: none; }
   #app .filters::-webkit-scrollbar { display: none; }
   #app .filters button {
-    flex: 0 0 auto; font: inherit; font-size: 13px; font-weight: 600;
-    padding: 8px 14px; border-radius: 999px; cursor: pointer;
+    flex: 0 0 auto; font: inherit; font-size: 15px; font-weight: 600;
+    padding: 9px 15px; border-radius: 999px; cursor: pointer;
     border: 1px solid var(--line); background: var(--paper); color: var(--mute);
   }
   #app .filters button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
 
   /* ---------- sections ---------- */
-  #app section { margin-top: 22px; }
+  #app section { margin-top: 24px; }
   #app .sec-head {
     display: flex; align-items: center; gap: 8px; padding: 0 2px 8px;
     border-bottom: 2px solid var(--ink);
   }
-  #app .sec-head h2 { font-size: 15px; margin: 0; letter-spacing: -.01em; flex: 1; }
-  #app .sec-head .tally { font-size: 12px; color: var(--mute); font-variant-numeric: tabular-nums; }
+  #app .sec-head h2 { font-size: 18px; margin: 0; letter-spacing: -.01em; flex: 1; word-break: keep-all; }
+  #app .sec-head .tally { font-size: 14px; color: var(--mute); font-variant-numeric: tabular-nums; }
 
-  #app ul { list-style: none; margin: 0; padding: 0; }
+  #app ul.items { list-style: none; margin: 0; padding: 0; }
   #app li { border-bottom: 1px solid var(--line); }
-  #app .row { display: flex; align-items: flex-start; gap: 10px; padding: 12px 2px; }
+  #app .row { display: flex; align-items: flex-start; gap: 10px; padding: 14px 2px; }
   #app .box {
-    flex: 0 0 auto; width: 22px; height: 22px; margin-top: 1px; border-radius: 7px;
+    flex: 0 0 auto; width: 28px; height: 28px; margin-top: 1px; border-radius: 8px;
     border: 2px solid var(--aqua-lite); background: var(--paper);
     cursor: pointer; position: relative; padding: 0;
   }
   #app .box[aria-checked="true"] { background: var(--aqua); border-color: var(--aqua); }
   #app .box[aria-checked="true"]::after {
-    content: ''; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px;
-    border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(43deg);
+    content: ''; position: absolute; left: 8px; top: 3px; width: 6px; height: 13px;
+    border: solid #fff; border-width: 0 3px 3px 0; transform: rotate(43deg);
   }
   #app .box:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
   #app .body { flex: 1; min-width: 0; }
-  #app .name { font-size: 15px; line-height: 1.45; word-break: keep-all; }
+  #app .name { font-size: 18px; line-height: 1.45; word-break: keep-all; }
   #app li.done .name { color: var(--mute); text-decoration: line-through; text-decoration-color: var(--aqua-lite); }
-  #app .memo-peek { font-size: 12.5px; color: var(--aqua); margin-top: 3px; word-break: keep-all; }
+  #app .memo-peek { font-size: 14.5px; color: var(--aqua); margin-top: 4px; word-break: keep-all; line-height: 1.5; }
 
   #app .who {
-    flex: 0 0 auto; font: inherit; font-size: 12px; font-weight: 700;
-    padding: 5px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
-    max-width: 96px; overflow: hidden; text-overflow: ellipsis;
+    flex: 0 0 auto; font: inherit; font-size: 14px; font-weight: 700;
+    padding: 7px 12px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+    max-width: 110px; overflow: hidden; text-overflow: ellipsis;
     border: 1px dashed var(--line); background: transparent; color: var(--mute);
   }
-  #app .who.a { border: 1px solid var(--sun); background: var(--sun-bg); color: #96590A; }
-  #app .who.b { border: 1px solid var(--coral); background: var(--coral-bg); color: #A93725; }
+  #app .who.a { border: 1px solid var(--sun); background: var(--sun-bg); color: var(--sun-ink); }
+  #app .who.b { border: 1px solid var(--coral); background: var(--coral-bg); color: var(--coral-ink); }
+  #app .who.c { border: 1px solid var(--leaf); background: var(--leaf-bg); color: var(--leaf-ink); }
   #app .more {
-    flex: 0 0 auto; width: 28px; height: 28px; border-radius: 8px; cursor: pointer;
+    flex: 0 0 auto; width: 34px; height: 34px; border-radius: 9px; cursor: pointer;
     border: 1px solid var(--line); background: var(--paper); color: var(--mute);
-    font-size: 15px; line-height: 1; padding: 0;
+    font-size: 17px; line-height: 1; padding: 0;
   }
   #app .more.on { background: var(--ink); border-color: var(--ink); color: #fff; }
 
-  #app .panel { display: none; padding: 0 2px 14px 34px; }
+  #app .panel { display: none; padding: 0 2px 16px 38px; }
   #app li.open .panel { display: block; }
-  #app .panel textarea {
-    width: 100%; font: inherit; font-size: 14px; padding: 10px 12px; border-radius: 12px;
-    border: 1px solid var(--line); background: var(--foam); color: var(--ink);
-    resize: vertical; min-height: 62px;
+  #app .panel label { display: block; font-size: 13.5px; font-weight: 700; color: var(--mute); margin: 0 0 5px; }
+  #app .panel input[data-act="rename"] {
+    width: 100%; font: inherit; font-size: 16px; padding: 11px 12px; border-radius: 12px;
+    border: 1px solid var(--line); background: var(--paper); color: var(--ink); margin-bottom: 12px;
   }
-  #app .panel textarea:focus { outline: 2px solid var(--aqua); outline-offset: 1px; }
+  #app .panel textarea {
+    width: 100%; font: inherit; font-size: 16px; padding: 11px 12px; border-radius: 12px;
+    border: 1px solid var(--line); background: var(--foam); color: var(--ink);
+    resize: vertical; min-height: 68px;
+  }
+  #app .panel input:focus, #app .panel textarea:focus { outline: 2px solid var(--aqua); outline-offset: 1px; }
   #app .panel .del {
-    margin-top: 8px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
-    background: none; border: none; color: var(--coral); padding: 4px 0;
+    margin-top: 10px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+    background: none; border: none; color: var(--coral); padding: 6px 0;
   }
 
-  #app .add {
-    width: 100%; text-align: left; font: inherit; font-size: 13.5px; font-weight: 600;
-    color: var(--aqua); background: none; border: none; cursor: pointer; padding: 12px 2px;
-  }
-  #app .adder { display: flex; gap: 6px; padding: 10px 0; }
+  #app .adder { display: flex; gap: 6px; padding: 12px 0; }
   #app .adder input {
-    flex: 1; min-width: 0; font: inherit; font-size: 14px; padding: 10px 12px;
+    flex: 1; min-width: 0; font: inherit; font-size: 16px; padding: 11px 12px;
     border-radius: 12px; border: 1px solid var(--line); background: var(--paper); color: var(--ink);
   }
   #app .adder input:focus { outline: 2px solid var(--aqua); outline-offset: 1px; }
   #app .adder button {
-    font: inherit; font-size: 13px; font-weight: 700; padding: 0 16px; cursor: pointer;
+    font: inherit; font-size: 15px; font-weight: 700; padding: 0 18px; cursor: pointer;
     border-radius: 12px; border: none; background: var(--ink); color: #fff;
   }
 
-  #app .empty { padding: 18px 2px; color: var(--mute); font-size: 13.5px; }
+  #app .empty { padding: 18px 2px; color: var(--mute); font-size: 15px; }
 
   /* ---------- footer ---------- */
   #app .foot {
-    margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line);
+    margin-top: 30px; padding-top: 16px; border-top: 1px solid var(--line);
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   }
   #app .foot button {
-    font: inherit; font-size: 12.5px; font-weight: 600; padding: 8px 12px; cursor: pointer;
+    font: inherit; font-size: 14px; font-weight: 600; padding: 9px 14px; cursor: pointer;
     border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--deep);
   }
-  #app .foot .note { font-size: 11.5px; color: var(--mute); flex: 1 1 100%; line-height: 1.5; }
-  #app .status { font-size: 11.5px; color: var(--aqua); font-weight: 600; }
+  #app .foot .note { font-size: 13.5px; color: var(--mute); flex: 1 1 100%; line-height: 1.6; }
+  #app .status { font-size: 13px; color: var(--aqua); font-weight: 600; }
 
   #app .conn {
-    font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 999px;
+    font-size: 13px; font-weight: 700; padding: 6px 11px; border-radius: 999px;
     white-space: nowrap; border: 1px solid var(--line); color: var(--mute);
   }
   #app .conn::before {
@@ -197,7 +228,7 @@
     margin-right: 5px; vertical-align: 1px; background: currentColor;
   }
   #app .conn.live { border-color: var(--aqua); background: var(--foam); color: var(--deep); }
-  #app .conn.offline { border-color: var(--coral); background: var(--coral-bg); color: #A93725; }
+  #app .conn.offline { border-color: var(--coral); background: var(--coral-bg); color: var(--coral-ink); }
 
   @media (prefers-reduced-motion: reduce) {
     #app .water, #app .water::before, #app .water::after { transition: none; animation: none; }
@@ -206,87 +237,195 @@
 
 <script>
 (function () {
-  var KEY = 'waterpark:checklist:v1';
+  var KEY = 'chuseok2026:checklist:v1';
   var app = document.getElementById('app');
   var state = null;
   var filter = 'all';
   var open = {};
+  var PLAN_KEY = 'chuseok2026:planOpen';
+  var planOpen = true;
+  try { planOpen = localStorage.getItem(PLAN_KEY) !== '0'; } catch (e) {}
   var saveTimer = null;
 
+  var FAM_N = 3;
+  var FAM_DEFAULT = ['엄마', '혀비', '혀니'];
+  var WHO_CLS = ['a', 'b', 'c'];
+
+  // 항목: [이름, 메모] 또는 [이름, 메모, 담당]. 담당을 안 적으면 섹션 기본값을 쓴다.
   var SEED = [
-    ['음식 · 바베큐', 0, [
-      ['삼겹살 · 목살 1.5kg (어른 300g / 아이 150g 기준)', ''],
-      ['소시지 · 떡갈비 · 새우 (아이들용)', '굽기 쉬운 걸로'],
-      ['김치 (구워 먹기 겸 반찬)', ''],
-      ['쌈채소 · 마늘 · 쌈장 · 기름장', ''],
-      ['즉석밥 6~8개', '남은 고기로 볶음밥'],
-      ['라면 4~5개 (야식용)', '']
+    ['갯벌 준비 · 엄마', 0, [
+      ['여벌옷 상하의 1인 1벌', ''],
+      ['수건 1인 2장', ''],
+      ['아쿠아슈즈 또는 장화', '현장 대여 2천원'],
+      ['얇은 바람막이 · 긴팔', '9월 말 아침 바닷바람'],
+      ['모자 · 선크림', ''],
+      ['젖은 옷 담을 비닐 · 지퍼백', ''],
+      ['물티슈', ''],
+      ['방수팩 (휴대폰)', ''],
+      ['갈아입을 속옷', ''],
+      ['접이식 의자 2개', '갯벌 밖에서 쉬실 때']
     ]],
-    ['음식 · 간식 & 음료', 0, [
-      ['과일 (수박 · 포도 · 방울토마토)', '집에서 미리 손질해 밀폐용기에'],
-      ['과자 · 젤리 · 어묵바', ''],
-      ['생수 2L 3~4병', ''],
-      ['이온음료', '물놀이는 탈수가 심함'],
-      ['아이 주스 · 커피', ''],
-      ['아이스박스 + 얼음 넉넉히', '']
+    ['갯벌 준비 · 혀비', 1, [
+      ['여벌옷 상하의 (아이는 2벌)', ''],
+      ['수건 1인 2장', ''],
+      ['아쿠아슈즈 또는 장화', '현장 대여 2천원'],
+      ['얇은 바람막이 · 긴팔', ''],
+      ['모자 · 선크림', ''],
+      ['젖은 옷 담을 비닐 · 지퍼백', ''],
+      ['물티슈', ''],
+      ['방수팩 (휴대폰)', ''],
+      ['갈아입을 속옷', ''],
+      ['아이용 삽 · 바구니', '']
     ]],
-    ['취사 도구 (버너 · 불판은 대여)', -1, [
-      ['부탄가스 3~4개', ''],
-      ['은박호일', '불판에 깔면 설거지 끝'],
-      ['키친타월 · 물티슈 대용량', ''],
-      ['집게 · 가위 · 국자', ''],
-      ['종이접시 · 종이컵 · 수저', ''],
-      ['쌈장 그릇 · 밀폐용기', ''],
-      ['쓰레기봉투 2~3장 · 지퍼백', ''],
-      ['수세미 · 주방세제 소량', '']
+    ['갯벌 준비 · 혀니', 2, [
+      ['여벌옷 상하의 (5살 2벌)', ''],
+      ['2살 여벌옷 3벌', ''],
+      ['수건 1인 2장', ''],
+      ['아쿠아슈즈 또는 장화', '현장 대여 2천원'],
+      ['5살 장화', ''],
+      ['얇은 바람막이 · 긴팔', ''],
+      ['모자 · 선크림', ''],
+      ['젖은 옷 담을 비닐 · 지퍼백', ''],
+      ['물티슈', ''],
+      ['방수팩 (휴대폰)', ''],
+      ['갈아입을 속옷', ''],
+      ['아기띠', '유모차는 모래에서 안 됨']
     ]],
-    ['물놀이', -1, [
-      ['수건 1인당 2장 (오후용 / 야간용)', ''],
-      ['아이 여벌옷 2벌씩', ''],
-      ['젖은 옷 담을 비닐봉투', ''],
-      ['구명조끼 · 암링', '초등 저학년용'],
-      ['튜브 (공기주입기 대여 확인)', ''],
-      ['아쿠아슈즈 · 물안경', ''],
-      ['워터프루프 선크림 · 모자', ''],
-      ['방수팩 (휴대폰)', '']
+    ['갯벌 · 공용', 1, [
+      ['호미 3~4개', '없으면 현장 대여 1천원'],
+      ['조개 담을 통 · 양파망', ''],
+      ['갈퀴', ''],
+      ['현금 약 8만원', '입장료 · 대여 현장결제만'],
+      ['해수물 담아올 통', '해감용, 체험장에 받는 곳 있음'],
+      ['방수 돗자리', ''],
+      ['아이스박스 (조개 운반)', ''],
+      ['체험장 전화 032-746-3093 저장', '시간표 변동 확인']
     ]],
-    ['카바나 · 편의', -1, [
-      ['돗자리 · 매트', ''],
-      ['얇은 담요 · 겉옷', '야간 물놀이 후 체온 뚝'],
-      ['휴대용 선풍기', ''],
-      ['보조배터리 · 멀티탭', ''],
-      ['랜턴 · 무드등', '야간 카바나 조명 약함'],
-      ['모기기피제', '']
+    ['취사 · 바비큐', 1, [
+      ['휴대용 버너 2개 + 부탄가스 6개', '야외 냄비요리용'],
+      ['큰 냄비 (조개탕)', '숙소 냄비 크기 미확인'],
+      ['프라이팬 (불고기)', ''],
+      ['집게 · 가위 · 칼 · 도마', ''],
+      ['은박호일', ''],
+      ['키친타월 2롤 · 물티슈 대용량', ''],
+      ['쓰레기봉투 · 음식물봉투', ''],
+      ['지퍼백 · 밀폐용기', ''],
+      ['랜턴', '마당 저녁 조명'],
+      ['아이스박스 + 아이스팩', '고기 · 조개'],
+      ['앞치마 · 목장갑', ''],
+      ['수세미 · 세제 소량', ''],
+      ['숯 · 착화제', '바비큐 3만원에 포함인지 확인'],
+      ['종이접시 · 컵 · 수저 10인×5끼', '', 2]
     ]],
-    ['상비약', -1, [
-      ['밴드 · 소독약', ''],
-      ['화상연고', '불판 화상 대비'],
-      ['벌레 물린 데 바르는 약', ''],
-      ['소화제', ''],
-      ['알로에젤', '']
+    ['식재료 · 23일 저녁 바비큐', -1, [
+      ['삼겹살 · 목살 2.5kg', '어른 300g · 아이 150g 기준', 1],
+      ['소시지 · 떡갈비 (아이용)', '', 2],
+      ['버섯 · 양파 · 마늘', '', 0],
+      ['쌈채소 · 쌈장 · 기름장', '', 0],
+      ['김치', '', 0],
+      ['쌀 4kg', '밥솥 있음', 0],
+      ['된장찌개 재료 (된장 · 두부 · 애호박 · 감자)', '', 0]
     ]],
-    ['예약처에 미리 확인', -1, [
-      ['취사 가능 시간대', '밤에는 제한되는 곳 많음'],
-      ['카바나 전기 사용 가능 여부', ''],
-      ['주류 반입 가능 여부', ''],
-      ['대형 튜브 반입 규정', '']
+    ['식재료 · 24일 아침', -1, [
+      ['건미역 · 들기름 · 국간장', '', 0],
+      ['계란 30구', '계란말이 · 삶은계란 · 지단', 1],
+      ['김', '', 0],
+      ['밑반찬 3~4가지', '', 0],
+      ['시리얼 · 우유 (아이)', '', 2]
+    ]],
+    ['식재료 · 24일 점심', 2, [
+      ['라면 10개', ''],
+      ['즉석밥 10개', '']
+    ]],
+    ['식재료 · 24일 저녁', -1, [
+      ['소불고기 양념육 1.5kg', '', 1],
+      ['바지락 1kg (보충용)', '수확 적을 때', 1],
+      ['조개탕용 대파 · 무 · 청양고추 · 다진마늘', '', 0]
+    ]],
+    ['식재료 · 25일 아침 (추석)', 0, [
+      ['사골곰탕 팩 3개', ''],
+      ['떡국떡 1.5kg', ''],
+      ['송편', '']
+    ]],
+    ['간식 · 음료', -1, [
+      ['과일 (사과 · 포도 · 방울토마토)', '', 0],
+      ['생수 2L 6병', '', 2],
+      ['주스 · 우유', '', 2],
+      ['과자 · 젤리', '', 2],
+      ['커피', '', 0],
+      ['맥주 · 소주 · 얼음', '', 1]
+    ]],
+    ['숙소 · 생활', -1, [
+      ['세면도구 · 개인 슬리퍼', '각자'],
+      ['충전기 · 멀티탭', '', 1],
+      ['모기기피제 · 벌레약', '시골, 벌레 나옴', 2],
+      ['상비약 (밴드 · 해열제 · 소화제 · 벌레물린약)', '', 1],
+      ['세탁세제 소량', '세탁기 있음', 0],
+      ['아이 놀거리 (보드게임 · 색칠)', '', 1],
+      ['여분 이불 · 베개', '침대 3개뿐, 호스트 문의 결과에 따라']
+    ]],
+    ['아기용품', 2, [
+      ['기저귀 · 물티슈', ''],
+      ['분유 · 이유식 · 아기 간식', ''],
+      ['아기 식기 · 턱받이', ''],
+      ['목욕용품', ''],
+      ['낮잠 이불', '']
+    ]],
+    ['출발 전 확인', 1, [
+      ['호스트에 인원 10명 · 바비큐 3만원 · 여분 침구 문의', ''],
+      ['하나로마트 연휴 영업 확인', '안 하면 전부 집에서'],
+      ['차량 3대 이내', ''],
+      ['23일 오후 영종대교 정체 감안 출발', ''],
+      ['갯벌 당일 날씨 · 시간표 변동 확인', '032-746-3093']
     ]]
+  ];
+
+  var PLAN_DAYS = [
+    ['9/23 (수)', '15:00 체크인. 부족한 것은 17시 전 하나로마트. 17:30~19:00 갯벌 맛보기(선택, 일몰 18:29). 18:30 야외 바비큐'],
+    ['9/24 (목)', '07:30 아침. 08:30~12:00 마시안 갯벌체험(간조 09:45). 12:30 간단 점심. 오후 휴식 · 조개 해감. 18:00 야외 조개구이 + 바비큐'],
+    ['9/25 (금, 추석)', '08:00 떡국. 짐 정리 후 11:00 체크아웃, 귀가']
+  ];
+
+  var PLAN_MEALS = [
+    ['23 저녁', '삼겹살 · 목살, 아이용 소시지 · 떡갈비, 버섯 · 양파 · 마늘, 쌈, 김치, 밥, 된장찌개', '고기 마당 그릴 / 찌개 · 밥 실내'],
+    ['24 아침', '밥, 미역국(고기 없이), 계란말이, 김, 밑반찬. 아이 시리얼 · 우유', '실내'],
+    ['24 점심', '라면 + 즉석밥 + 김치 + 삶은 계란 + 과일. 대안 을왕리 칼국수 외식', '실내'],
+    ['24 저녁', '캔 조개로 조개구이 · 조개탕, 소불고기, 밥, 반찬. 수확 적으면 바지락 보충', '마당 그릴 + 버너'],
+    ['25 아침', '떡국(사골곰탕 팩 + 떡국떡 + 계란지단 · 김), 송편, 김치', '실내']
+  ];
+
+  var PLAN_NOTES = [
+    '인천 중구 용유로380번길 62 · 체크인 15:00 · 체크아웃 11:00 · 주차 3대',
+    '실내에서 고기 · 생선 조리 금지 → 마당 그릴 · 버너를 쓴다',
+    '근처에 마트 · 편의점 없음. 하나로마트 평일 9~17시, CU 차로 10분',
+    '갯벌 요금은 현장결제만: 어른 1만 · 초등 5천 · 미취학 3천, 호미 1천 · 장화 2천'
   ];
 
   function seed() {
     var items = [], n = 0;
     SEED.forEach(function (sec) {
       sec[2].forEach(function (it) {
-        items.push({ id: 'i' + (n++), cat: sec[0], name: it[0], memo: it[1], done: false, who: sec[1] });
+        items.push({
+          id: 'i' + (n++),
+          cat: sec[0],
+          name: it[0],
+          memo: it[1],
+          done: false,
+          who: it.length > 2 ? it[2] : sec[1]
+        });
       });
     });
-    return { v: 1, families: ['은영네', '현주네'], items: items };
+    return { v: 1, families: FAM_DEFAULT.slice(), items: items };
   }
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
     });
+  }
+
+  function famName(i) {
+    return (state.families && state.families[i]) || FAM_DEFAULT[i];
   }
 
   function setStatus(msg) {
@@ -299,7 +438,7 @@
   // 사람에게 변경이 즉시 전달된다. localStorage 는 첫 화면을 바로 그리기 위한
   // 캐시일 뿐이므로, 서버 상태가 오면 항상 덮어쓴다.
   var WORKER_HOST = 'waterpark-sync.shwoo.workers.dev';
-  var ROOM = 'waterpark';
+  var ROOM = 'chuseok-2026-incheon';
 
   var CONN_TEXT = {
     connecting: '연결 중…',
@@ -312,8 +451,23 @@
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
   }
   function cacheLoad() {
-    try { var v = localStorage.getItem(KEY); return v ? JSON.parse(v) : null; }
-    catch (e) { return null; }
+    try {
+      var v = localStorage.getItem(KEY);
+      if (!v) return null;
+      var s = JSON.parse(v);
+      if (!s || !Array.isArray(s.items)) return null;
+      s.families = normFam(s.families);
+      return s;
+    } catch (e) { return null; }
+  }
+
+  // 예전 캐시나 깨진 값이 와도 항상 세 칸을 채운다.
+  function normFam(f) {
+    var out = [];
+    for (var i = 0; i < FAM_N; i++) {
+      out.push((Array.isArray(f) && f[i]) ? f[i] : FAM_DEFAULT[i]);
+    }
+    return out;
   }
 
   function setConn(s) {
@@ -357,12 +511,13 @@
 
       if (m.t === 'snap') {
         if (m.empty) {
-          // 방이 비어 있다 — 기본 목록을 심는다. 두 명이 동시에 들어와도
+          // 방이 비어 있다 — 기본 목록을 심는다. 여럿이 동시에 들어와도
           // id 가 결정적이라 결과가 같고, 서버도 비어 있을 때만 받는다.
-          send({ t: 'seed', families: seed().families, items: seed().items });
+          var s = seed();
+          send({ t: 'seed', families: s.families, items: s.items });
           return;
         }
-        state = { v: 1, families: m.families, items: m.items };
+        state = { v: 1, families: normFam(m.families), items: m.items };
         cacheSave();
         render();
       } else if (m.t === 'op') {
@@ -403,11 +558,12 @@
     } else if (op.t === 'del') {
       state.items = state.items.filter(function (x) { return x.id !== op.id; });
     } else if (op.t === 'fam') {
-      state.families[op.i === 1 ? 1 : 0] = op.v;
+      var fi = op.i;
+      if (fi >= 0 && fi < FAM_N) state.families[fi] = op.v;
     }
   }
 
-  // 메모·집 이름은 타이핑마다 보내지 않고 잠깐 모아서 보낸다.
+  // 이름·메모·집 이름은 타이핑마다 보내지 않고 잠깐 모아서 보낸다.
   var pend = {}, pendFam = {};
   function queuePatch(id, patch) {
     pend[id] = Object.assign(pend[id] || {}, patch);
@@ -428,9 +584,32 @@
   function visible(it) {
     if (filter === 'all') return true;
     if (filter === 'left') return !it.done;
-    if (filter === 'a') return it.who === 0;
-    if (filter === 'b') return it.who === 1;
+    if (filter.charAt(0) === 'f') return it.who === +filter.slice(1);
     return true;
+  }
+
+  function planHtml() {
+    var h = '<div class="plan">' +
+      '<button class="plan-toggle" data-act="plan" aria-expanded="' + planOpen + '">' +
+      '📋 일정 · 식단 · 숙소 메모<span class="chev">' + (planOpen ? '▲' : '▼') + '</span></button>' +
+      '<div class="plan-body"' + (planOpen ? '' : ' hidden') + '>';
+
+    h += '<h3>일정</h3><table><tbody>';
+    PLAN_DAYS.forEach(function (d) {
+      h += '<tr><td class="d">' + esc(d[0]) + '</td><td>' + esc(d[1]) + '</td></tr>';
+    });
+    h += '</tbody></table>';
+
+    h += '<h3>식단</h3><table><thead><tr><th>끼니</th><th>메뉴</th><th>조리</th></tr></thead><tbody>';
+    PLAN_MEALS.forEach(function (m) {
+      h += '<tr><td class="d">' + esc(m[0]) + '</td><td>' + esc(m[1]) + '</td><td>' + esc(m[2]) + '</td></tr>';
+    });
+    h += '</tbody></table>';
+
+    h += '<h3>숙소 · 갯벌 메모</h3><ul>';
+    PLAN_NOTES.forEach(function (n) { h += '<li>' + esc(n) + '</li>'; });
+    h += '</ul></div></div>';
+    return h;
   }
 
   function render() {
@@ -440,30 +619,33 @@
     var total = state.items.length;
     var done = state.items.filter(function (i) { return i.done; }).length;
     var pct = total ? Math.round(done / total * 100) : 0;
-    var fa = esc(state.families[0]), fb = esc(state.families[1]);
 
     var html = '';
     html += '<div class="tank"><div class="water" style="height:' + pct + '%"></div><div class="tank-inner">' +
-      '<p class="eyebrow">아마존 워터파크 · 13:00–22:00</p>' +
-      '<h1>두 집 준비물 체크</h1>' +
-      '<p class="sub">어른 4 · 초등 3 · 중학생 1 &nbsp;|&nbsp; 카바나 + 취사</p>' +
+      '<p class="eyebrow">추석 가족여행 · 인천 용유도</p>' +
+      '<h1>세 집 준비물 체크</h1>' +
+      '<p class="sub">9.23(수)~25(금) 2박 3일 · 어른 6 · 초등 2 · 유아 2<br>갯벌체험 + 취사</p>' +
       '<div class="count"><b>' + done + '</b><span>/ ' + total + '개 완료 · ' + pct + '%</span></div>' +
       '</div></div>';
 
-    html += '<div class="crew">' +
-      '<input class="a" data-fam="0" value="' + fa + '" maxlength="12" aria-label="첫 번째 집 이름">' +
-      '<input class="b" data-fam="1" value="' + fb + '" maxlength="12" aria-label="두 번째 집 이름">' +
-      '</div>';
+    html += planHtml();
 
-    var na = state.items.filter(function (i) { return i.who === 0; }).length;
-    var nb = state.items.filter(function (i) { return i.who === 1; }).length;
-    var nn = total - na - nb;
+    html += '<div class="crew">';
+    for (var i = 0; i < FAM_N; i++) {
+      html += '<input class="' + WHO_CLS[i] + '" data-fam="' + i + '" value="' + esc(famName(i)) +
+        '" maxlength="12" aria-label="' + (i + 1) + '번째 집 이름">';
+    }
+    html += '</div>';
+
     html += '<div class="filters">' +
       '<button data-f="all" aria-pressed="' + (filter === 'all') + '">전체 ' + total + '</button>' +
-      '<button data-f="left" aria-pressed="' + (filter === 'left') + '">남은 것 ' + (total - done) + '</button>' +
-      '<button data-f="a" aria-pressed="' + (filter === 'a') + '">' + fa + ' ' + na + '</button>' +
-      '<button data-f="b" aria-pressed="' + (filter === 'b') + '">' + fb + ' ' + nb + '</button>' +
-      '</div>';
+      '<button data-f="left" aria-pressed="' + (filter === 'left') + '">남은 것 ' + (total - done) + '</button>';
+    for (var k = 0; k < FAM_N; k++) {
+      var nk = state.items.filter(function (x) { return x.who === k; }).length;
+      html += '<button data-f="f' + k + '" aria-pressed="' + (filter === 'f' + k) + '">' +
+        esc(famName(k)) + ' ' + nk + '</button>';
+    }
+    html += '</div>';
 
     cats.forEach(function (cat) {
       var all = state.items.filter(function (i) { return i.cat === cat; });
@@ -472,11 +654,12 @@
       var d = all.filter(function (i) { return i.done; }).length;
 
       html += '<section><div class="sec-head"><h2>' + esc(cat) + '</h2>' +
-        '<span class="tally">' + d + '/' + all.length + '</span></div><ul>';
+        '<span class="tally">' + d + '/' + all.length + '</span></div><ul class="items">';
 
       list.forEach(function (it) {
-        var whoCls = it.who === 0 ? 'a' : (it.who === 1 ? 'b' : '');
-        var whoTxt = it.who === 0 ? fa : (it.who === 1 ? fb : '담당 +');
+        var w = (it.who >= 0 && it.who < FAM_N) ? it.who : -1;
+        var whoCls = w >= 0 ? WHO_CLS[w] : '';
+        var whoTxt = w >= 0 ? famName(w) : '담당 +';
         var isOpen = !!open[it.id];
         html += '<li class="' + (it.done ? 'done ' : '') + (isOpen ? 'open' : '') + '" data-id="' + it.id + '">' +
           '<div class="row">' +
@@ -485,9 +668,13 @@
           (it.memo && !isOpen ? '<div class="memo-peek">✎ ' + esc(it.memo) + '</div>' : '') +
           '</div>' +
           '<button class="who ' + whoCls + '" data-act="who">' + esc(whoTxt) + '</button>' +
-          '<button class="more' + (isOpen ? ' on' : '') + '" data-act="more" aria-label="메모">✎</button>' +
+          '<button class="more' + (isOpen ? ' on' : '') + '" data-act="more" aria-label="고치기">✎</button>' +
           '</div>' +
-          '<div class="panel"><textarea data-act="memo" placeholder="메모 — 수량, 누가 사올지, 빠뜨리기 쉬운 것">' + esc(it.memo) + '</textarea>' +
+          '<div class="panel">' +
+          '<label>항목 이름</label>' +
+          '<input type="text" data-act="rename" value="' + esc(it.name) + '" maxlength="120">' +
+          '<label>메모</label>' +
+          '<textarea data-act="memo" placeholder="수량, 누가 사올지, 빠뜨리기 쉬운 것">' + esc(it.memo) + '</textarea>' +
           '<button class="del" data-act="del">이 항목 삭제</button></div>' +
           '</li>';
       });
@@ -510,7 +697,8 @@
       '<button data-act="reset">처음 목록으로 되돌리기</button>' +
       '<span class="status"></span>' +
       '<p class="note">이 목록은 링크를 연 모든 사람이 함께 보고 고칩니다. ' +
-      '한쪽에서 체크하면 다른 쪽 화면에 바로 반영되니 새로고침할 필요가 없습니다.</p>' +
+      '한 집에서 체크하면 다른 집 화면에 바로 반영되니 새로고침할 필요가 없습니다. ' +
+      '✎ 를 누르면 항목 이름과 메모를 고칠 수 있습니다.</p>' +
       '</div>';
 
     var f = captureFocus();
@@ -518,7 +706,7 @@
     restoreFocus(f);
   }
 
-  // 상대가 바꾼 내용이 도착하면 화면을 통째로 다시 그리기 때문에,
+  // 다른 집이 바꾼 내용이 도착하면 화면을 통째로 다시 그리기 때문에,
   // 그 순간 입력 중이던 칸의 내용과 커서 위치를 잃지 않도록 되살린다.
   function captureFocus() {
     var el = document.activeElement;
@@ -526,6 +714,7 @@
     var li = el.closest('li');
     var adder = el.closest('.adder');
     var kind = el.matches('textarea[data-act="memo"]') ? 'memo'
+             : el.matches('input[data-act="rename"]') ? 'rename'
              : el.matches('.crew input') ? 'fam'
              : (adder ? 'adder' : null);
     if (!kind) return null;
@@ -545,6 +734,8 @@
     var el = null;
     if (f.kind === 'memo' && f.id) {
       el = app.querySelector('li[data-id="' + f.id + '"] textarea[data-act="memo"]');
+    } else if (f.kind === 'rename' && f.id) {
+      el = app.querySelector('li[data-id="' + f.id + '"] input[data-act="rename"]');
     } else if (f.kind === 'fam') {
       el = app.querySelector('.crew input[data-fam="' + f.fam + '"]');
     } else if (f.kind === 'adder' && f.cat != null) {
@@ -567,6 +758,12 @@
     if (!btn) return;
     var act = btn.getAttribute('data-act');
 
+    if (act === 'plan') {
+      planOpen = !planOpen;
+      try { localStorage.setItem(PLAN_KEY, planOpen ? '1' : '0'); } catch (e) {}
+      render();
+      return;
+    }
     if (btn.hasAttribute('data-f')) { filter = btn.getAttribute('data-f'); render(); return; }
 
     var li = btn.closest('li');
@@ -578,12 +775,18 @@
       cacheSave(); render(); return;
     }
     if (act === 'who' && it) {
-      it.who = it.who === -1 ? 0 : (it.who === 0 ? 1 : -1);
+      var w = (it.who >= 0 && it.who < FAM_N) ? it.who : -1;
+      it.who = (w + 1 >= FAM_N) ? -1 : w + 1;
       send({ t: 'set', id: it.id, patch: { who: it.who } });
       cacheSave(); render(); return;
     }
-    if (act === 'more' && it) { open[it.id] = !open[it.id]; render();
-      var ta = app.querySelector('li[data-id="' + it.id + '"] textarea'); if (ta) ta.focus(); return; }
+    if (act === 'more' && it) {
+      open[it.id] = !open[it.id];
+      render();
+      var inp = app.querySelector('li[data-id="' + it.id + '"] input[data-act="rename"]');
+      if (inp) inp.focus();
+      return;
+    }
     if (act === 'del' && it) {
       state.items = state.items.filter(function (x) { return x.id !== it.id; });
       send({ t: 'del', id: it.id });
@@ -594,7 +797,7 @@
       var input = wrap.querySelector('input');
       var val = input.value.trim();
       if (!val) { input.focus(); return; }
-      // 두 기기에서 동시에 추가해도 겹치지 않는 id 를 쓴다.
+      // 여러 기기에서 동시에 추가해도 겹치지 않는 id 를 쓴다.
       var item = {
         id: 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
         cat: wrap.getAttribute('data-cat'),
@@ -607,7 +810,7 @@
       cacheSave(); render(); return;
     }
     if (act === 'reset') {
-      if (!confirm('모두의 체크와 메모가 사라지고 기본 목록으로 돌아갑니다. 두 집 화면 모두 초기화됩니다. 계속할까요?')) return;
+      if (!confirm('모두의 체크와 메모가 사라지고 기본 목록으로 돌아갑니다. 세 집 화면 모두 초기화됩니다. 계속할까요?')) return;
       var s = seed();
       state = s;
       send({ t: 'reset', families: s.families, items: s.items });
@@ -619,24 +822,34 @@
     if (e.key === 'Enter' && e.target.matches('.adder input')) {
       e.target.closest('.adder').querySelector('button').click();
     }
+    if (e.key === 'Enter' && e.target.matches('input[data-act="rename"]')) {
+      e.target.blur();
+    }
   });
 
   app.addEventListener('input', function (e) {
     var t = e.target;
     if (t.matches('textarea[data-act="memo"]')) {
-      var it = find(t.closest('li').getAttribute('data-id'));
-      if (it) { it.memo = t.value; queuePatch(it.id, { memo: it.memo }); }
+      var mi = find(t.closest('li').getAttribute('data-id'));
+      if (mi) { mi.memo = t.value; queuePatch(mi.id, { memo: mi.memo }); }
+    }
+    if (t.matches('input[data-act="rename"]')) {
+      var ri = find(t.closest('li').getAttribute('data-id'));
+      // 빈 이름은 보내지 않는다. 지웠다가 다시 쓰는 중일 수 있다.
+      if (ri && t.value.trim()) { ri.name = t.value.trim(); queuePatch(ri.id, { name: ri.name }); }
     }
     if (t.matches('.crew input')) {
-      var i = +t.getAttribute('data-fam');
-      var v = t.value || (i === 0 ? '은영네' : '현주네');
-      state.families[i] = v;
-      queueFam(i, v);
+      var fi = +t.getAttribute('data-fam');
+      var v = t.value || FAM_DEFAULT[fi];
+      state.families[fi] = v;
+      queueFam(fi, v);
     }
   });
 
   app.addEventListener('change', function (e) {
     if (e.target.matches('.crew input')) render();
+    // 이름 칸을 비운 채 빠져나가면 원래 이름으로 되돌린다.
+    if (e.target.matches('input[data-act="rename"]') && !e.target.value.trim()) render();
   });
 
   // 캐시로 먼저 그려 흰 화면을 피하고, 연결되면 서버 상태로 덮어쓴다.
